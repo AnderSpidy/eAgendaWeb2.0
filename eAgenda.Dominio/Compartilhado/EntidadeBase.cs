@@ -1,4 +1,6 @@
-﻿using System;
+﻿using eAgenda.Dominio.ModuloAutenticacao;
+using Microsoft.AspNetCore.Identity;
+using System;
 using Taikandi;
 
 namespace eAgenda.Dominio.Compartilhado
@@ -7,9 +9,9 @@ namespace eAgenda.Dominio.Compartilhado
     {
         public Guid Id { get; set; }
 
-        //public IdentityUser<Guid> Usuario { get; set; }
+        public Usuario Usuario { get; set; }
 
-        //public Guid UsuarioId { get; set; }
+        public Guid UsuarioId { get; set; }
 
         public EntidadeBase()
         {

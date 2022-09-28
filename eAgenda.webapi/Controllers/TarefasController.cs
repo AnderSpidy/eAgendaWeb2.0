@@ -3,15 +3,17 @@ using AutoMapper;
 using eAgenda.Aplicacao.ModuloTarefa;
 using eAgenda.Dominio.ModuloTarefa;
 using eAgenda.webapi.ViewModels.Tarefa;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.Security.Claims;
 
 namespace eAgenda.webapi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-
+    [Authorize]
     public class TarefasController : eAgendaControllerBase
     {
         private readonly ServicoTarefa servicoTarefa;
@@ -27,7 +29,9 @@ namespace eAgenda.webapi.Controllers
         [HttpGet]
         public ActionResult<List<ListarTarefaViewModel>> SelecionarTodos()
         {
-            var tarefaResult = servicoTarefa.SelecionarTodos(StatusTarefaEnum.Todos);
+
+            //O método obtemId foi refatorado para eAgendaControllerBase na qual trazemos o UsuarioLogado "tratado"
+            var tarefaResult = servicoTarefa.SelecionarTodos(StatusTarefaEnum.Todos, UsuarioLogado.Id);
 
             if (tarefaResult.IsFailed)
                 return InternalError(tarefaResult);
@@ -71,8 +75,12 @@ namespace eAgenda.webapi.Controllers
         public ActionResult<FormsTarefaViewModel> Inserir(InserirTarefaViewModel novaTarefaVM)
         {
 
-
             var tarefa = mapeadorTarefas.Map<Tarefa>(novaTarefaVM);
+
+
+            //O método obtemId foi refatorado para eAgendaControllerBase na qual trazemos o UsuarioLogado "tratado"
+            tarefa.UsuarioId = UsuarioLogado.Id;//precisamos pegar o usuario pelo Token
+
 
             var tarefaResult = servicoTarefa.Inserir(tarefa);
 
@@ -87,12 +95,12 @@ namespace eAgenda.webapi.Controllers
 
         }
 
+      
+
         [HttpPut("{id:guid}")]
         public ActionResult<FormsTarefaViewModel> Editar(Guid id, EditarTarefaViewModel tarefaVM)
         {
-
-
-
+            
             var tarefaResult = servicoTarefa.SelecionarPorId(id);
 
             if (tarefaResult.IsFailed && RegistroNãoEncontrado(tarefaResult))
@@ -100,6 +108,8 @@ namespace eAgenda.webapi.Controllers
 
 
             var tarefa = mapeadorTarefas.Map(tarefaVM, tarefaResult.Value);
+
+
 
             tarefaResult = servicoTarefa.Editar(tarefa);
 

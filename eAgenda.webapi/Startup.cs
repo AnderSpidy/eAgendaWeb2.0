@@ -22,6 +22,13 @@ using eAgenda.webapi.Filters;
 using eAgenda.Dominio.ModuloContato;
 using eAgenda.Infra.Orm.ModuloContato;
 using eAgenda.Aplicacao.ModuloContato;
+using eAgenda.Aplicacao.ModuloAutenticacao;
+using Microsoft.AspNetCore.Identity;
+using eAgenda.Dominio.ModuloAutenticacao;
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using eAgenda.webapi.Config;
 
 namespace eAgenda.webapi
 {
@@ -44,41 +51,33 @@ namespace eAgenda.webapi
             //---------------------------------------------------------------------------------------------
 
             //Injeção de dependencia do AutoMapper(ou seja, a transição dos dados das propriedades da Tarefa)
-            services.AddAutoMapper(config =>
-            {
-                config.AddProfile<TarefaProfile>();//TAREFA
-                config.AddProfile<ContatoProfile>();//CONTATO
-            });
-            
+            //services.AddAutoMapper(config =>
+            //{
+            //    config.AddProfile<UsuarioProfile>(); //inclusive o USUARIO
+
+            //    config.AddProfile<TarefaProfile>();//TAREFA
+            //    config.AddProfile<ContatoProfile>();//CONTATO
+            //});
+            //ULTIMA REFATORAÇÃO 27/09/2022 ^^
+            services.AddAutoMapper(typeof(Startup));
+            //A principio, toda classe de configuração de dependencia, se estiver herdando de uma classe profile, ela não precisa mais ser expecificada na classe Startup
+
             //injeção de dependencia Bd e Configuração 
-            services.AddSingleton((x) => new ConfiguracaoAplicacaoeAgenda().ConnectionStrings);
-            services.AddScoped<IContextoPersistencia, eAgendaDbContext>();
-            //Injeção de Repositorio e camada de serviço -TAREFA
-            services.AddScoped<IRepositorioTarefa, RepositorioTarefaOrm>();
-            services.AddTransient<ServicoTarefa>();
-            //Injeção de Repositorio e camada de serviço -CONTATO
-            services.AddScoped<IRepositorioContato, RepositorioContatoOrm>();
-            services.AddTransient<ServicoContato>();
+            services.ConfigurarInjecaoDependencia();
 
+            // Configuração da Autenticação NÃO ENTENDI COMO FUNCIONA/SERVE 
+            services.ConfigurarAutenticacao();
 
+            //CONFIGURAÇÃO DOS FILTROS
+            services.ConfigurarFiltros();
 
-            //-----------------------------------------------------------------------------------------------------------------------------
-            services.AddControllers(config =>
-            {
-                config.Filters.Add(new ValidarViewModelActionFilter());//é a classe na qual usamos para retornar asmensagens que os protocolos http nos manda (la encapsulamos da forma que prefirirmos)
-                //lembrando que poderiamos fazer diferentes ActionFilters para coisas com diferentes padões(Se for fazer, tem o detalhe de colocar os decorators em cima dos metodos que ira usar como escopo)
-            });
-
-
-
-
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "eAgenda.webapi", Version = "v1" });
-            });
+            //CONFIGURAÇÃO DO SWAGGER -DOCUMENTAÇÃO
+            services.ConfigurarSwagger();
+            //---------------------------------------------------------
+            //CONFIGURAÇÃO DO JWT "TOKEN"
+            services.ConfigurarJWT();
         }
-
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        //This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
@@ -94,10 +93,20 @@ namespace eAgenda.webapi
 
             app.UseAuthorization();
 
+
+            app.UseAuthentication();
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
             });
         }
+
+      
+        
+        
+       
+       
+      
     }
 }
