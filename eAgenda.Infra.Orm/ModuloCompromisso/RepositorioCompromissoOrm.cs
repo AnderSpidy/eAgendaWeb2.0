@@ -40,7 +40,8 @@ namespace eAgenda.Infra.Orm.ModuloCompromisso
 
         public List<Compromisso> SelecionarTodos()
         {
-            return compromissos.ToList();
+
+            return compromissos.Include(c => c.Contato).ToList();
         }
 
         public List<Compromisso> SelecionarCompromissosFuturos(DateTime dataInicial, DateTime dataFinal)

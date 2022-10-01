@@ -1,4 +1,5 @@
-﻿using eAgenda.Dominio.ModuloAutenticacao;
+﻿using eAgenda.Aplicacao.ModuloAutenticacao;
+using eAgenda.Dominio.ModuloAutenticacao;
 using eAgenda.Infra.Orm;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
@@ -18,6 +19,8 @@ namespace eAgenda.webapi.Config
             //Injeção da camada de serviço -AUTENTICAÇÃO E USUARIOMANEGER
             services.AddTransient<UserManager<Usuario>>();
             services.AddTransient<SignInManager<Usuario>>();
+
+            services.AddTransient<ServicoAutenticacao>();
         }
         //"Classe Tradutora para portugues"
         public class MensagensPortuguesIdentity : IdentityErrorDescriber

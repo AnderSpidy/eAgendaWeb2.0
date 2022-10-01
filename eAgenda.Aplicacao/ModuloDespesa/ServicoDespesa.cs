@@ -90,7 +90,15 @@ namespace eAgenda.Aplicacao.ModuloDespesa
 
             return Result.Ok(despesa);
         }
+        public Result Excluir(Guid id)
+        {
+            var categoriaResult = SelecionarPorId(id);
 
+            if (categoriaResult.IsSuccess)
+                return Excluir(categoriaResult.Value);
+
+            return Result.Fail(categoriaResult.Errors);
+        }
         public Result Excluir(Despesa despesa)
         {
             Log.Logger.Debug("Tentando excluir despesa... {@d}", despesa);

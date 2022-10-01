@@ -106,6 +106,15 @@ namespace eAgenda.Aplicacao.ModuloCompromisso
                 return Result.Fail(msgErro);
             }
         }
+        public Result Excluir(Guid id)
+        {
+            var tarefaResult = SelecionarPorId(id);
+
+            if (tarefaResult.IsSuccess)
+                return Excluir(tarefaResult.Value);
+
+            return Result.Fail(tarefaResult.Errors);
+        }
 
         public Result<List<Compromisso>> SelecionarTodos()
         {

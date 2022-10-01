@@ -3,13 +3,14 @@ using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System;
 using eAgenda.Aplicacao.ModuloContato;
-using eAgenda.webapi.ViewModels.Contato;
 using eAgenda.Dominio.ModuloContato;
+using eAgenda.webapi.ViewModels.ModuloContato;
 
 namespace eAgenda.webapi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    //[Authorize]
     public class ContatoController : eAgendaControllerBase
     {
         private readonly ServicoContato servicoContato;
@@ -67,7 +68,6 @@ namespace eAgenda.webapi.Controllers
         public ActionResult<FormsContatoViewModel> Inserir(InserirContatoViewModel novoContatoVM)
         {
 
-
             var contato = mapeadorContatos.Map<Contato>(novoContatoVM);
 
             var contatoResult = servicoContato.Inserir(contato);
@@ -87,13 +87,10 @@ namespace eAgenda.webapi.Controllers
         public ActionResult<FormsContatoViewModel> Editar(Guid id, EditarContatoViewModel contatoVM)
         {
 
-
-
             var contatoResult = servicoContato.SelecionarPorId(id);
 
             if (contatoResult.IsFailed && RegistroNãoEncontrado(contatoResult))
                 return NotFound(contatoResult);
-
 
             var contato = mapeadorContatos.Map(contatoVM, contatoResult.Value);
 

@@ -1,5 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
+using System;
 
 namespace eAgenda.webapi.Config
 {
@@ -11,6 +13,15 @@ namespace eAgenda.webapi.Config
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "eAgenda.webapi", Version = "v1" });
                 //PARA ABLITAR UMA OPÇÃO NO SWAGGER PARA IMPUTARMOS TOKEN E CONSEGUIR UTILIZAR O SWAGGER
+
+                //SERVE PARA QUE O SWEGGER RECEBA O TIMESPAN COMO STRING, PARA SER MAIS FACIL IMPUTAR OS DADOS
+                c.MapType<TimeSpan>(() => new OpenApiSchema
+                {
+                    Type = "string",
+                    Example = new OpenApiString("00:00:00")
+                });
+
+
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
                     In = ParameterLocation.Header,

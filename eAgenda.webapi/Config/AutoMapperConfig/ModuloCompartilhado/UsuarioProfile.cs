@@ -2,7 +2,7 @@
 using eAgenda.Dominio.ModuloAutenticacao;
 using eAgenda.webapi.ViewModels.Autenticacao;
 
-namespace eAgenda.webapi.Config.AutoMapperConfig
+namespace eAgenda.webapi.Config.AutoMapperConfig.ModuloCompartilhado
 {
     public class UsuarioProfile : Profile
     {

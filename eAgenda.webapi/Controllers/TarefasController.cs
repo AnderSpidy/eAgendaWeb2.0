@@ -2,7 +2,7 @@
 using AutoMapper;
 using eAgenda.Aplicacao.ModuloTarefa;
 using eAgenda.Dominio.ModuloTarefa;
-using eAgenda.webapi.ViewModels.Tarefa;
+using eAgenda.webapi.ViewModels.ModuloTarefa;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -13,7 +13,7 @@ namespace eAgenda.webapi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
     public class TarefasController : eAgendaControllerBase
     {
         private readonly ServicoTarefa servicoTarefa;
@@ -79,7 +79,7 @@ namespace eAgenda.webapi.Controllers
 
 
             //O método obtemId foi refatorado para eAgendaControllerBase na qual trazemos o UsuarioLogado "tratado"
-            tarefa.UsuarioId = UsuarioLogado.Id;//precisamos pegar o usuario pelo Token
+           /* tarefa.UsuarioId = UsuarioLogado.Id;*///precisamos pegar o usuario pelo Token
 
 
             var tarefaResult = servicoTarefa.Inserir(tarefa);

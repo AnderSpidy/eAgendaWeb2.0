@@ -1,7 +1,8 @@
 ﻿using AutoMapper;
 using eAgenda.Dominio.Compartilhado;
 using eAgenda.Dominio.ModuloTarefa;
-using eAgenda.webapi.ViewModels.Tarefa;
+using eAgenda.webapi.Config.AutoMapperConfig.ModuloCompartilhado;
+using eAgenda.webapi.ViewModels.ModuloTarefa;
 
 namespace eAgenda.webapi.Config.AutoMapperConfig
 {
@@ -20,52 +21,55 @@ namespace eAgenda.webapi.Config.AutoMapperConfig
         private void ConverterDeViewModelParaEntidade()
         {
             CreateMap<InserirTarefaViewModel, Tarefa>()
+                            .ForMember(destino => destino.UsuarioId, opt => opt.MapFrom<UsuarioResolver>())//SERVE PARA ENXUGAR O CODIGO DOS CONTROLLER E NAO PRECISAR MAIS FICAR INCLUINDO O USUARIO, MAS SIM DIRETO DELO MAPEADOR
                             .ForMember(destino => destino.Itens, opt => opt.Ignore())
-                            .AfterMap((viewModel, tarefa) =>
-                            {
-                                if (viewModel.Itens == null)
-                                    return;
+                            .AfterMap<AdicionarItensMappingAction>();//O ADICIONARITENSMAPPINGACTION ESTA APENAS PARA ENXUGAR O CODIGO ABAIXO EM UMA CLASSE
+            //.AfterMap((viewModel, tarefa) =>
+            //{
+            //    if (viewModel.Itens == null)
+            //        return;
 
-                                foreach (var itemVM in viewModel.Itens)
-                                {
-                                    var item = new ItemTarefa();
+            //    foreach (var itemVM in viewModel.Itens)
+            //    {
+            //        var item = new ItemTarefa();
 
-                                    item.Titulo = itemVM.Titulo;
+            //        item.Titulo = itemVM.Titulo;
 
-                                    tarefa.AdicionarItem(item);
-                                }
-                            });
+            //        tarefa.AdicionarItem(item);
+            //    }
+            //});
 
             CreateMap<EditarTarefaViewModel, Tarefa>()
                 .ForMember(destino => destino.Itens, opt => opt.Ignore())
-                .AfterMap((viewModel, tarefa) =>
-                {
-                    foreach (var itemVM in viewModel.Itens)
-                    {
-                        if (itemVM.Concluido)
-                        {
-                            tarefa.ConcluirItem(itemVM.Id);
-                        }
-                        else
-                        {
-                            tarefa.MarcarPendente(itemVM.Id);
-                        }
-                    }
+                .AfterMap<EditarItensMappingAction>();
+            //.AfterMap((viewModel, tarefa) =>
+            //{
+            //    foreach (var itemVM in viewModel.Itens)
+            //    {
+            //        if (itemVM.Concluido)
+            //        {
+            //            tarefa.ConcluirItem(itemVM.Id);
+            //        }
+            //        else
+            //        {
+            //            tarefa.MarcarPendente(itemVM.Id);
+            //        }
+            //    }
 
-                    foreach (var itemVM in viewModel.Itens)
-                    {
-                        if (itemVM.Status == StatusItemTarefa.Adicionado)
-                        {
-                            var item = new ItemTarefa(itemVM.Titulo);
-                            tarefa.AdicionarItem(item);
-                        }
-                        else if (itemVM.Status == StatusItemTarefa.Removido)
-                        {
-                            tarefa.RemoverItem(itemVM.Id);
+            //    foreach (var itemVM in viewModel.Itens)
+            //    {
+            //        if (itemVM.Status == StatusItemTarefa.Adicionado)
+            //        {
+            //            var item = new ItemTarefa(itemVM.Titulo);
+            //            tarefa.AdicionarItem(item);
+            //        }
+            //        else if (itemVM.Status == StatusItemTarefa.Removido)
+            //        {
+            //            tarefa.RemoverItem(itemVM.Id);
 
-                        }
-                    }
-                });
+            //        }
+            //    }
+            //});
         }
 
         private void ConverterDeEntidadeParaViewModel()
@@ -86,5 +90,49 @@ namespace eAgenda.webapi.Config.AutoMapperConfig
                             opt.MapFrom(origem => origem.Concluido ? "Concluido" : "Pendente"));
         }
     }
+    public class AdicionarItensMappingAction : IMappingAction<InserirTarefaViewModel, Tarefa>
+    {
+        public void Process(InserirTarefaViewModel viewModel, Tarefa tarefa, ResolutionContext context)
+        {
+            if (viewModel.Itens == null)
+                return;
 
+            foreach (var itemVM in viewModel.Itens)
+            {
+                var item = new ItemTarefa();
+
+                item.Titulo = itemVM.Titulo;
+
+                tarefa.AdicionarItem(item);
+            }
+        }
     }
+
+    public class EditarItensMappingAction : IMappingAction<EditarTarefaViewModel, Tarefa>
+    {
+        public void Process(EditarTarefaViewModel viewModel, Tarefa tarefa, ResolutionContext context)
+        {
+            foreach (var itemVM in viewModel.Itens)
+            {
+                if (itemVM.Concluido)
+                    tarefa.ConcluirItem(itemVM.Id);
+
+                else
+                    tarefa.MarcarPendente(itemVM.Id);
+            }
+
+            foreach (var itemVM in viewModel.Itens)
+            {
+                if (itemVM.Status == StatusItemTarefa.Adicionado)
+                {
+                    var item = new ItemTarefa(itemVM.Titulo);
+                    tarefa.AdicionarItem(item);
+                }
+                else if (itemVM.Status == StatusItemTarefa.Removido)
+                {
+                    tarefa.RemoverItem(itemVM.Id);
+                }
+            }
+        }
+    }
+}

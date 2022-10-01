@@ -19,7 +19,7 @@ namespace eAgenda.Infra.Orm.ModuloTarefa
             //O mapeador dos novas propriedades da entidadeBase
             builder.HasOne(x => x.Usuario)
                 .WithMany()
-                .IsRequired(false)
+                .IsRequired(required: false)
                 .HasForeignKey(x => x.UsuarioId)
                 .OnDelete(DeleteBehavior.NoAction);
 

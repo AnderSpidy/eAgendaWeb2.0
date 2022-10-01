@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace eAgenda.webapi.ViewModels.Tarefa
+namespace eAgenda.webapi.ViewModels.ModuloTarefa
 {
     public class FormsTarefaViewModel
     {

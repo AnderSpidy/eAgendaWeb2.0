@@ -1,33 +1,9 @@
-using eAgenda.Aplicacao.ModuloTarefa;
-using eAgenda.Dominio.ModuloTarefa;
-using eAgenda.Dominio;
-using eAgenda.Infra.Configs;
-using eAgenda.Infra.Orm.ModuloTarefa;
-using eAgenda.Infra.Orm;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using Microsoft.OpenApi.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using eAgenda.webapi.Config.AutoMapperConfig;
-using eAgenda.webapi.Filters;
-using eAgenda.Dominio.ModuloContato;
-using eAgenda.Infra.Orm.ModuloContato;
-using eAgenda.Aplicacao.ModuloContato;
-using eAgenda.Aplicacao.ModuloAutenticacao;
-using Microsoft.AspNetCore.Identity;
-using eAgenda.Dominio.ModuloAutenticacao;
-using System.Text;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
 using eAgenda.webapi.Config;
 
 namespace eAgenda.webapi
@@ -59,6 +35,7 @@ namespace eAgenda.webapi
             //    config.AddProfile<ContatoProfile>();//CONTATO
             //});
             //ULTIMA REFATORAÇÃO 27/09/2022 ^^
+
             services.AddAutoMapper(typeof(Startup));
             //A principio, toda classe de configuração de dependencia, se estiver herdando de uma classe profile, ela não precisa mais ser expecificada na classe Startup
 
@@ -91,10 +68,13 @@ namespace eAgenda.webapi
 
             app.UseRouting();
 
+
+            app.UseAuthentication();
+
             app.UseAuthorization();
 
 
-            app.UseAuthentication();
+           
 
             app.UseEndpoints(endpoints =>
             {

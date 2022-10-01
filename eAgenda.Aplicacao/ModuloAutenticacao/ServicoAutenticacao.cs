@@ -12,11 +12,12 @@ namespace eAgenda.Aplicacao.ModuloAutenticacao
     {
         private readonly UserManager<Usuario> userManager;
         private readonly SignInManager<Usuario> signInManager;
-        public ServicoAutenticacao(UserManager<Usuario> userManager)
+        public ServicoAutenticacao(UserManager<Usuario> userManager, SignInManager<Usuario> signInManager)
         {
             this.userManager = userManager;
+            this.signInManager = signInManager;
         }
-        public async Task<Result<Usuario>> RegistrarUsuario(Usuario usuario,string signInManager)
+        public async Task<Result<Usuario>> RegistrarUsuario(Usuario usuario,string senha)
         {
             Log.Logger.Debug("Tentando registrar o usuário... {@u}", usuario);
 
@@ -27,7 +28,7 @@ namespace eAgenda.Aplicacao.ModuloAutenticacao
             {
 
                 //isso é o editar 
-                IdentityResult usuarioResult = await userManager.CreateAsync(usuario);
+                IdentityResult usuarioResult = await userManager.CreateAsync(usuario,senha);
                 
                 if(usuarioResult.Succeeded == false)
                 {

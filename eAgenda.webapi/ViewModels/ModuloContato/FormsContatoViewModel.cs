@@ -1,7 +1,6 @@
-﻿using eAgenda.webapi.ViewModels.Tarefa;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace eAgenda.webapi.ViewModels.Contato
+namespace eAgenda.webapi.ViewModels.ModuloContato
 {
     public class FormsContatoViewModel
     {
